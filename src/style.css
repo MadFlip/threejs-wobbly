@@ -1,0 +1,45 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root,
+main {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" stroke="%2336d0b4" fill="%2336d0b4" width="20px" height="20px" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4.5"/></svg>') 10 10, auto; 
+}
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+  body {
+    cursor: image-set(url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" stroke="%2336d0b4" fill="%2336d0b4" width="40px" height="40px" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9"/></svg>') 2x) 10 10, auto;
+  }
+
+  @supports (-moz-appearance: none) {
+    body {
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" stroke="%2336d0b4" fill="%2336d0b4" width="20px" height="20px" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4.5"/></svg>') 10 10, auto;
+    }
+  }
+}
+
+.logo {
+  position: absolute;
+  left: 30px;
+  top: 30px;
+  z-index: 2;
+  color: #fff;
+}
+
+#root > * {
+  --leva-sizes-rootWidth: calc(100% - 100px);
+
+  @media (min-width: 768px) {
+    --leva-sizes-rootWidth: 350px;
+  }
+}
