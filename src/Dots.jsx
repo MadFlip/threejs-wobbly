@@ -62,7 +62,7 @@ export default function Dots({color, radius, dotsCount, dotsRotation, dotsScale,
 
   return (
     <animated.instancedMesh ref={ref} args={[null, null, dtsCnt]} position={[0, 0, -1]} scale={dotsScale} rotation-x={dotsRotation}>
-      <circleGeometry args={[0.02]} />
+      <circleGeometry args={[0.02, 6]} />
       <meshBasicMaterial color={color}/>
     </animated.instancedMesh>
   )
