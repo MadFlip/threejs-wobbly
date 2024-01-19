@@ -7,6 +7,7 @@ import { animated } from '@react-spring/three'
 import Dots from './Dots'
 import WireframeMesh from './Wireframe'
 import { useControls, folder } from 'leva'
+import { Perf } from 'r3f-perf'
 
 // React-spring animates native elements, in this case <mesh/> etc,
 // but it can also handle 3rd–party objs, just wrap them in "animated".
@@ -227,6 +228,9 @@ export default function Scene({ setBg }) {
 
   return (
     <>
+      <Perf 
+        position='bottom-left'
+      />
       <PerspectiveCamera makeDefault position={[0, 0, 4]} fov={75}>
         <animated.ambientLight intensity={lightControls.ambientIntensity} />
         <animated.pointLight ref={light} position-z={-15} intensity={hovered ? 0 : lightControls.pointLightIntensity} color={lightControls.pointLightColor}/>
