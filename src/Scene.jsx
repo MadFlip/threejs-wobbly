@@ -1,12 +1,12 @@
-import * as THREE from 'three'
 import React, { Suspense, useEffect, useState, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { PerspectiveCamera, Environment, MeshDistortMaterial } from '@react-three/drei'
 import { useSpring } from '@react-spring/core'
 import { animated } from '@react-spring/three'
-import Dots from './Dots'
+import Rings from './Rings'
 import WireframeMesh from './Wireframe'
 import { useControls, folder } from 'leva'
+import { Perf } from 'r3f-perf'
 
 // React-spring animates native elements, in this case <mesh/> etc,
 // but it can also handle 3rd–party objs, just wrap them in "animated".
@@ -18,22 +18,6 @@ export default function Scene({ setBg }) {
   const [mode, setMode] = useState(false)
   const [down, setDown] = useState(false)
   const [hovered, setHovered] = useState(false)
-
-  const dotsRadiusBase = 9.5
-  const dotsCountBase = 220
-
-  const calculateDots = (radius) => {
-    return Math.round((radius / dotsRadiusBase) * dotsCountBase)
-  }
-
-  const dotsRadiusMedium = dotsRadiusBase / 1.25
-  const dotsCountMedium = calculateDots(dotsRadiusMedium)
-
-  const dotsRadiusSmall = dotsRadiusBase / 1.73
-  const dotsCountSmall = calculateDots(dotsRadiusSmall)
-
-  const dotsRadiusSmallest = dotsRadiusBase / 2.71
-  const dotsCountSmallest = calculateDots(dotsRadiusSmallest)
   
   const bubbleControls = useControls({
     'Bubble': folder({
@@ -204,13 +188,13 @@ export default function Scene({ setBg }) {
 
   // Springs for color and overall looks, this is state-driven animation
   // React-spring is physics based and turns static props into animated values
-  const [{ wobble, coat, color, wireframeScale, dotsRotation, dotsScale, dotsAmplitude }] = useSpring(
+  const [{ wobble, coat, color, wireframeScale, ringsRotation, dotsScale, dotsAmplitude }] = useSpring(
     {
       wobble: down ? bubbleControls.scaleOnHover + 0.1 : hovered ? bubbleControls.scaleOnHover : bubbleControls.scaleDefault,
       coat: mode && !hovered ? bubbleControls.clearcoat : 0,
       color: hovered ? bubbleControls.colorOnHover : mode ? bubbleControls.colorOnDark : bubbleControls.colorDefault,
       wireframeScale: hovered ? bubbleControls.scaleOnHover + 0.2 : bubbleControls.scaleDefault + 0.2,
-      dotsRotation: hovered ? Math.PI * -0.1 : Math.PI * -0.2,
+      ringsRotation: hovered ? Math.PI * -0.1 : Math.PI * -0.2,
       dotsScale: hovered ? 0.65 : 0.5,
       dotsAmplitude: hovered ? 0.5 : 0.2,
       config: (n) => n === 'wobble' && hovered && { mass: springControls.mass, tension: springControls.tension, friction: springControls.friction }
@@ -227,6 +211,7 @@ export default function Scene({ setBg }) {
 
   return (
     <>
+      <Perf position="top-left" />
       <PerspectiveCamera makeDefault position={[0, 0, 4]} fov={75}>
         <animated.ambientLight intensity={lightControls.ambientIntensity} />
         <animated.pointLight ref={light} position-z={-15} intensity={hovered ? 0 : lightControls.pointLightIntensity} color={lightControls.pointLightColor}/>
@@ -265,10 +250,11 @@ export default function Scene({ setBg }) {
             metalness={bubbleControls.metalness}
           />
         </animated.mesh>
-        {otherControls.enableDotsRipple && <Dots color={mode ? otherControls.dotsColorOnDark : otherControls.dotsColorDefault} radius={dotsRadiusBase} dotsCount={dotsCountBase} dotsRotation={dotsRotation} dotsScale={dotsScale} dotsAmplitude={dotsAmplitude} hovered={hovered} />}
-        {otherControls.enableDotsRipple && <Dots color={mode ? otherControls.dotsColorOnDark : otherControls.dotsColorDefault} radius={dotsRadiusMedium} dotsCount={dotsCountMedium} dotsRotation={dotsRotation} dotsScale={dotsScale} dotsAmplitude={dotsAmplitude} hovered={hovered} />}
-        {otherControls.enableDotsRipple && <Dots color={mode ? otherControls.dotsColorOnDark : otherControls.dotsColorDefault} radius={dotsRadiusSmall} dotsCount={dotsCountSmall} dotsRotation={dotsRotation} dotsScale={dotsScale} dotsAmplitude={dotsAmplitude} hovered={hovered} />}
-        {otherControls.enableDotsRipple && <Dots color={mode ? otherControls.dotsColorOnDark : otherControls.dotsColorDefault} radius={dotsRadiusSmallest} dotsCount={dotsCountSmallest} dotsRotation={dotsRotation} dotsScale={dotsScale} dotsAmplitude={dotsAmplitude} hovered={hovered} />}
+        {otherControls.enableDotsRipple &&
+        <>
+          <Rings color={mode ? otherControls.dotsColorOnDark : otherControls.dotsColorDefault} ringsRotation={ringsRotation} dotsAmplitude={dotsAmplitude} hovered={hovered} />
+        </>
+        }
         {otherControls.enableWireframe && <WireframeMesh color={color} scale={wireframeScale} />}
         <Environment files={ 'hdri/my-dawn.hdr' } />
       </Suspense>
